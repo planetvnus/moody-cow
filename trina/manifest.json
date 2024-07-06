@@ -1,23 +1,32 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Fashion Scraper",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": [
+    "activeTab",
+    "<all_urls>"
+  ],
   "background": {
-    "service_worker": "dist/background.js"
+    "scripts": ["dist/background.js"],
+    "persistent": true
   },
-   "content_scripts": [
+  "content_scripts": [
     {
-      "matches": ["https://www.victoriassecret.com/*"],
-      "js": ["dist/content.js", "dist/hot-reload.js"]
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
     }
   ],
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "images/icon.png",
       "48": "images/icon.png",
       "128": "images/icon.png"
     }
+  },
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
   }
 }
