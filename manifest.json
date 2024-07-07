@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Materials",
+    "version": "1.0",
+    "description": "pop up the material",
+    "content_scripts": [
+        {
+            "js": [
+                "scripts/content.js"
+            ],
+            "matches": [
+                "https://www.victoriassecret.co.uk/style/*"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "info.html",
+        "default_icon": "pineapple.png"
+    },
+    "permissions": [
+        "activeTab",
+        "storage"
+    ]
+}
