@@ -3,3 +3,5 @@ uvicorn
 openai
 requests
 PyMuPDF
+pdfplumber
+bs4
