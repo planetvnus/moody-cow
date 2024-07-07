@@ -1,49 +1,46 @@
 "use strict";
-const scrapeProductDetails = () => {
-    console.log("im here");
-    const compositionElement = document.getElementById("Composition");
-    console.log(document.getElementById("Composition"), "wtf");
-    console.log(document.querySelector(".StyleContent"), "wtf2");
-    console.log(compositionElement, "compositionelement");
-    const materialDetails = compositionElement
-        ? compositionElement.textContent
-        : "No materials found";
-    // Send the scraped details to the background script
-    chrome.runtime.sendMessage({ materials: materialDetails });
+// Function to check if all child elements have content
+const areAllChildrenPopulated = (children) => {
+    return Array.from(children).every((child) => child.innerText.trim() !== "");
 };
-const waitForElementToLoad = (selector, className) => {
-    return new Promise((resolve) => {
-        const element = document.querySelector(selector);
-        console.log(element, "elementinwait");
-        if (element && element.classList.contains(className)) {
-            console.log(element, "element2");
-            resolve(element);
-        }
-        else {
-            console.log("observer");
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === "attributes" &&
-                        mutation.target instanceof Element) {
-                        const target = mutation.target;
-                        if (target.matches(selector) &&
-                            target.classList.contains(className)) {
-                            observer.disconnect();
-                            resolve(target);
-                        }
-                    }
-                });
+// Function to log innerText of all children of .StyleContent
+const logChildrenInnerText = () => {
+    // Select the parent element
+    const element = document.querySelector(".StyleContent.loaded");
+    // Check if the element exists and is visible
+    if (element) {
+        console.log("Parent element found:", element);
+        // Get all child elements
+        const children = element.children;
+        // Check if all child elements are present and populated
+        if (children.length === 3 && areAllChildrenPopulated(children)) {
+            console.log(`Found ${children.length} children`);
+            // Iterate over the array and log the innerText of each child
+            Array.from(children).forEach((child, index) => {
+                console.log(`Child ${index + 1}:`, child);
+                console.log(`Child ${index + 1} innerText:`, child.innerText);
             });
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ["class"],
-            });
+            // Disconnect the observer since we have what we need
+            observer.disconnect();
+            const materialDetails = {
+                composition: children[2].innerText,
+                material: children[1].innerText,
+                style: children[0].innerText,
+            };
+            chrome.runtime.sendMessage({ materials: materialDetails });
         }
-    });
+    }
+    else {
+        console.log("Parent element not found or not visible");
+    }
 };
-// Wait for the element with class "StyleContent loaded" to be loaded
-waitForElementToLoad(".StyleContent", "loaded").then(() => {
-    scrapeProductDetails();
+// Observe changes to the DOM
+const observer = new MutationObserver(logChildrenInnerText);
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "style"],
 });
+// Initial check in case the content is already loaded
+document.addEventListener("DOMContentLoaded", logChildrenInnerText);
