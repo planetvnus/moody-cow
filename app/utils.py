@@ -1,22 +1,23 @@
 from openai import OpenAI
 import fitz
 import requests
-
+import os
+openai_key = os.environ.get('OPEN_AI_API') or "api_key"
 #uncomment below and add api_key
 # api_key=""
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=openai_key)
 
 # Provide the URL to the PDF and your OpenAI API key
-# pdf_url = "https://corporate.lululemon.com/~/media/Files/L/Lululemon/our-impact/reporting-and-disclosure/lululemon-2022-impact-report.pdf"
+pdf_url = "https://corporate.lululemon.com/~/media/Files/L/Lululemon/our-impact/reporting-and-disclosure/lululemon-2022-impact-report.pdf"
 
 # # Step 1: Fetch the PDF from the URL
-# def download_pdf(url):
-#     response = requests.get(url)
-#     pdf_path = "/tmp/report.pdf"  # Temporary path to save the PDF
-#     with open(pdf_path, "wb") as f:
-#         f.write(response.content)
-#     print("download done")
-#     return pdf_path
+def download_pdf(url):
+    response = requests.get(url)
+    pdf_path = "/tmp/report.pdf"  # Temporary path to save the PDF
+    with open(pdf_path, "wb") as f:
+        f.write(response.content)
+    print("download done")
+    return pdf_path
 
 # # Step 2: Extract text from the PDF using PyMuPDF
 # def extract_text_from_pdf(pdf_path):
